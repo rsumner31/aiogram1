@@ -92,6 +92,11 @@ class TelegramObject(metaclass=MetaTelegramObject):
     def conf(self) -> typing.Dict[str, typing.Any]:
         return self._conf
 
+    @classmethod
+    def _parse_date(cls, unix_time):
+        if unix_time is not None:
+            return datetime.datetime.fromtimestamp(unix_time)
+
     @property
     def props(self) -> typing.Dict[str, BaseField]:
         """
