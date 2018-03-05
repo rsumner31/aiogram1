@@ -44,6 +44,8 @@ class BaseBot:
         if validate_token:
             api.check_token(token)
         self.__token = token
+        self.proxy = proxy
+        self.proxy_auth = proxy_auth
 
         # Proxy settings
         self.proxy = proxy
