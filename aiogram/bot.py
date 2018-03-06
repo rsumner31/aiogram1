@@ -3,7 +3,6 @@ import json
 
 import aiohttp
 
-from aiogram.utils.payload import generate_payload
 from . import api
 from . import types
 from .utils.payload import generate_payload
