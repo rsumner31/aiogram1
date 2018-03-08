@@ -26,30 +26,30 @@ GENDER = 'process_gender'
 @dp.message_handler(commands=['start'])
 async def cmd_start(message: types.Message):
     """
-    Conversation's entry point
+    Entry point to conversation
     """
     # Get current state
     state = dp.current_state(chat=message.chat.id, user=message.from_user.id)
-    # Update user's state
+    # Update user state
     await state.set_state(NAME)
 
     await message.reply("Hi there! What's your name?")
 
 
-# You can use state '*' if you need to handle all states
+# You can use state '*' if you need to handle all states.
 @dp.message_handler(state='*', commands=['cancel'])
 @dp.message_handler(state='*', func=lambda message: message.text.lower() == 'cancel')
 async def cancel_handler(message: types.Message):
     """
-    Allow user to cancel any action
+    Allow to cancel any action
     """
     with dp.current_state(chat=message.chat.id, user=message.from_user.id) as state:
         # Ignore command if user is not in any (defined) state
         if await state.get_state() is None:
             return
 
-        # Otherwise cancel state and inform user about it
-        # And remove keyboard (just in case)
+        # Otherwise cancel state and inform user about that.
+        # And just in case remove keyboard.
         await state.reset_state(with_data=True)
         await message.reply('Canceled.', reply_markup=types.ReplyKeyboardRemove())
 
@@ -68,13 +68,13 @@ async def process_name(message: types.Message):
     await message.reply("How old are you?")
 
 
-# Check age. Age gotta be digit
+# Check age. Age must be is digit
 @dp.message_handler(state=AGE, func=lambda message: not message.text.isdigit())
 async def failed_process_age(message: types.Message):
     """
-    If age is invalid
+    If age is in invalid format
     """
-    return await message.reply("Age gotta be a number.\nHow old are you? (digits only)")
+    return await message.reply("Age should be a number.\nHow old are you?")
 
 
 @dp.message_handler(state=AGE, func=lambda message: message.text.isdigit())
@@ -93,19 +93,19 @@ async def process_age(message: types.Message):
 
 
 @dp.message_handler(state=GENDER, func=lambda message: message.text not in ["Male", "Female", "Other"])
-async def failed_process_gender(message: types.Message):
+async def failed_process_sex(message: types.Message):
     """
-    In this example gender has to be one of: Male, Female, Other.
+    Sex must be always (in this example) is one of: Male, Female, Other.
     """
     return await message.reply("Bad gender name. Choose you gender from keyboard.")
 
 
 @dp.message_handler(state=GENDER)
-async def process_gender(message: types.Message):
+async def process_sex(message: types.Message):
     state = dp.current_state(chat=message.chat.id, user=message.from_user.id)
 
     data = await state.get_data()
-    data['gender'] = message.text
+    data['sex'] = message.text
 
     # Remove keyboard
     markup = types.ReplyKeyboardRemove()
@@ -114,7 +114,7 @@ async def process_gender(message: types.Message):
     await bot.send_message(message.chat.id, text(
         text('Hi! Nice to meet you,', bold(data['name'])),
         text('Age:', data['age']),
-        text('Gender:', data['gender']),
+        text('Sex:', data['sex']),
         sep='\n'), reply_markup=markup, parse_mode=ParseMode.MARKDOWN)
 
     # Finish conversation

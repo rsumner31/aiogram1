@@ -34,19 +34,19 @@ dp = Dispatcher(bot, storage=storage)
 
 
 async def cmd_start(message: types.Message):
-    # Yep. aiogram allows to respond into webhook.
+    # Yep. aiogram allow to send response over webhook.
     # https://core.telegram.org/bots/api#making-requests-when-getting-updates
     return SendMessage(chat_id=message.chat.id, text='Hi from webhook!',
                        reply_to_message_id=message.message_id)
 
 
 async def cmd_about(message: types.Message):
-    # In this function markdown utils are userd for formatting message text
+    # In this function used markdown utils for formatting message text
     return SendMessage(message.chat.id, text(
-        bold('Hi! I\'m just a simple telegram bot.'),
+        bold('Hi! I\'m simple telegram bot.'),
         '',
-        text('I\'m powered by', bold('Python', Version(*sys.version_info[:]))),
-        text('With', link(text('aiogram', aiogram.VERSION), 'https://github.com/aiogram/aiogram')),
+        text('I\'m worked on', bold('Python', Version(*sys.version_info[:]))),
+        text('With', link(text('aiogram', aiogram.VERSION), 'https://bitbucket.org/illemius/aiogram')),
         sep='\n'
     ), parse_mode=ParseMode.MARKDOWN)
 
@@ -55,7 +55,7 @@ async def cancel(message: types.Message):
     # Get current state context
     state = dp.current_state(chat=message.chat.id, user=message.from_user.id)
 
-    # If current user in any state - cancel it.
+    # If now user in any state - cancel it.
     if await state.get_state() is not None:
         await state.set_state(state=None)
         return SendMessage(message.chat.id, 'Current action is canceled.')
@@ -66,7 +66,7 @@ async def unknown(message: types.Message):
     """
     Handler for unknown messages.
     """
-    return SendMessage(message.chat.id, f"I don\'t know what to do with content type `{message.content_type()}`. Sorry :c")
+    return SendMessage(message.chat.id, 'I don\'t know what to do with that content type. Sorry :c')
 
 
 async def cmd_id(message: types.Message):
@@ -103,16 +103,16 @@ async def cmd_id(message: types.Message):
 
 
 async def on_startup(app):
-    # Demonstrate one of the available methods for registering handlers
+    # Demonstrate one of available method of registering handlers
     # This command available only in main state (state=None)
     dp.register_message_handler(cmd_start, commands=['start'])
 
-    # This handler is available in all states at any time.
+    # This handler available in all states in any time.
     dp.register_message_handler(cmd_about, commands=['help', 'about'], state='*')
     dp.register_message_handler(unknown, content_types=BAD_CONTENT,
                                 func=lambda message: message.chat.type == ChatType.PRIVATE)
 
-    # You are able to register one function handler for multiple conditions
+    # You can register one handler with multiple filters set
     dp.register_message_handler(cancel, commands=['cancel'], state='*')
     dp.register_message_handler(cancel, func=lambda message: message.text.lower().strip() in ['cancel'], state='*')
 
@@ -126,18 +126,18 @@ async def on_startup(app):
 
     # If URL is bad
     if webhook.url != WEBHOOK_URL:
-        # If URL doesnt match current - remove webhook
+        # If URL doesnt match with by current remove webhook
         if not webhook.url:
             await bot.delete_webhook()
 
         # Set new URL for webhook
         await bot.set_webhook(WEBHOOK_URL, certificate=open(WEBHOOK_SSL_CERT, 'rb'))
-        # If you want to use free certificate signed by LetsEncrypt you need to set only URL without sending certificate.
+        # If you want to use free certificate signed by LetsEncrypt need to set only URL without sending certificate.
 
 
 async def on_shutdown(app):
     """
-    Graceful shutdown. This method is recommended by aiohttp docs.
+    Graceful shutdown. This method is recommended by aiohttp doc's.
     """
     # Remove webhook.
     await bot.delete_webhook()
@@ -162,5 +162,5 @@ if __name__ == '__main__':
     # Start web-application.
     web.run_app(app, host=WEBHOOK_HOST, port=WEBHOOK_PORT, ssl_context=context)
     # Note:
-    #   If you start your bot using nginx or Apache web server, SSL context is not required.
-    #   Otherwise you need to set `ssl_context` parameter.
+    #   If you should start bot over nginx or Apache web server SSL context is not required here.
+    #   Otherwise you need to set that parameter.
