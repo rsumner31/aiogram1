@@ -1,8 +1,6 @@
 import asyncio
 import logging
 
-import aiohttp
-
 from aiogram import Bot, types
 from aiogram.dispatcher import Dispatcher
 from aiogram.types import ParseMode
@@ -40,6 +38,11 @@ async def cmd_start(message: types.Message):
     async with session.get(GET_IP_URL) as response:
         content.append(text(':globe_showing_Americas:', bold('IP:'), code(await response.text())))
         # This line is formatted to '🌎 *IP:* `YOUR IP`'
+
+    # Make request through proxy
+    async with session.get(GET_IP_URL, proxy=bot.proxy, proxy_auth=bot.proxy_auth) as response:
+        content.append(text(':locked_with_key:', bold('IP:'), code(await response.text()), italic('via proxy')))
+        # This line is formatted to '🔐 *IP:* `YOUR IP` _via proxy_'
 
     # Send content
     await bot.send_message(message.chat.id, emojize(text(*content, sep='\n')), parse_mode=ParseMode.MARKDOWN)
