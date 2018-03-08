@@ -68,17 +68,17 @@ class BaseBot:
         self.parse_mode = parse_mode
 
     def __del__(self):
-        asyncio.ensure_future(self.close())
+        self.close()
 
-    async def close(self):
+    def close(self):
         """
         Close all client sessions
         """
-        if self.session and not self.session.closed:
-            await self.session.close()
         for session in self._temp_sessions:
             if not session.closed:
-                await session.close()
+                session.close()
+        if self.session and not self.session.closed:
+            self.session.close()
 
     def create_temp_session(self, limit: base.Integer = 1, force_close: base.Boolean = False) -> aiohttp.ClientSession:
         """
