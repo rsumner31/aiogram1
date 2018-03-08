@@ -663,9 +663,6 @@ class ContentType(helper.Helper):
     :key: LEFT_CHAT_MEMBER
     :key: INVOICE
     :key: SUCCESSFUL_PAYMENT
-    :key: CONNECTED_WEBSITE
-    :key: UNKNOWN
-    :key: ANY
     """
     mode = helper.HelperMode.snake_case
 
