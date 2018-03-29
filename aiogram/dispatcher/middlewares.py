@@ -28,8 +28,7 @@ class MiddlewareManager:
         :param middleware:
         :return:
         """
-        if not isinstance(middleware, BaseMiddleware):
-            raise TypeError(f"`middleware` must be an instance of BaseMiddleware, not {type(middleware)}")
+        assert isinstance(middleware, BaseMiddleware)
         if middleware.is_configured():
             raise ValueError('That middleware is already used!')
 

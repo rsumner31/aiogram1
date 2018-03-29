@@ -18,7 +18,7 @@ So... In this example found small trouble:
 
 
 If you want to automatic change getting updates method use executor utils (from aiogram.utils.executor)
-"s""
+"""
 # TODO: Move token to environment variables.
 
 import argparse

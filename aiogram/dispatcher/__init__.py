@@ -5,12 +5,11 @@ import logging
 import time
 import typing
 
-from .filters import CommandsFilter, ContentTypeFilter, ExceptionsFilter, RegexpFilter, \
-    USER_STATE, generate_default_filters
+from .filters import CommandsFilter, ContentTypeFilter, ExceptionsFilter, RegexpFilter, USER_STATE, \
+    generate_default_filters
 from .handler import CancelHandler, Handler, SkipHandler
 from .middlewares import MiddlewareManager
-from .storage import BaseStorage, DELTA, DisabledStorage, EXCEEDED_COUNT, FSMContext, \
-    LAST_CALL, RATE_LIMIT, RESULT
+from .storage import BaseStorage, DELTA, DisabledStorage, EXCEEDED_COUNT, FSMContext, LAST_CALL, RATE_LIMIT, RESULT
 from .webhook import BaseResponse
 from ..bot import Bot
 from ..types.message import ContentType
@@ -31,8 +30,9 @@ class Dispatcher:
     """
     Simple Updates dispatcher
 
-    It will process incoming updates: messages, edited messages, channel posts, edited channel posts,
-    inline queries, chosen inline results, callback queries, shipping queries, pre-checkout queries.
+    It will be can process incoming updates, messages, edited messages, channel posts, edited channels posts,
+    inline query, chosen inline result, callback query, shipping query, pre-checkout query.
+    Provide next step handler and etc.
     """
 
     def __init__(self, bot, loop=None, storage: typing.Optional[BaseStorage] = None,
@@ -181,6 +181,7 @@ class Dispatcher:
                                      state=state)
                 return await self.pre_checkout_query_handlers.notify(update.pre_checkout_query)
         except Exception as e:
+            success = False
             err = await self.errors_handlers.notify(self, update, e)
             if err:
                 return err
@@ -292,7 +293,7 @@ class Dispatcher:
 
     async def wait_closed(self):
         """
-        Wait for the long-polling to close
+        Wait closing the long polling
 
         :return:
         """
@@ -304,7 +305,7 @@ class Dispatcher:
 
     def is_polling(self):
         """
-        Check if polling is enabled
+        Check polling is enabled?
 
         :return:
         """
@@ -313,18 +314,18 @@ class Dispatcher:
     def register_message_handler(self, callback, *, commands=None, regexp=None, content_types=None, func=None,
                                  state=None, custom_filters=None, run_task=None, **kwargs):
         """
-        Register handler for message
+        You can register messages handler by this method
 
         .. code-block:: python3
 
-            # This handler works only if state is None (by default).
+            # This handler works only is state is None (by default).
             dp.register_message_handler(cmd_start, commands=['start', 'about'])
             dp.register_message_handler(entry_point, commands=['setup'])
 
-            # This handler works only if current state is "first_step"
+            # That handler works only if current state is "first_step"
             dp.register_message_handler(step_handler_1, state="first_step")
 
-            # If you want to handle all states by one handler then use `state="*"`.
+            # If you want to handle all states by one handler then use state="*".
             dp.register_message_handler(cancel_handler, commands=['cancel'], state="*")
             dp.register_message_handler(cancel_handler, func=lambda msg: msg.text.lower() == 'cancel', state="*")
 
@@ -356,7 +357,7 @@ class Dispatcher:
     def message_handler(self, *custom_filters, commands=None, regexp=None, content_types=None, func=None, state=None,
                         run_task=None, **kwargs):
         """
-        Decorator for message handler
+        Decorator for messages handler
 
         Examples:
 
@@ -373,13 +374,6 @@ class Dispatcher:
 
             @dp.messages_handler(rexexp='^[a-z]+-[0-9]+')
             async def msg_handler(message: types.Message):
-
-        Filter messages by command regular expression:
-
-        .. code-block:: python3
-
-            @dp.message_handler(filters.RegexpCommandsFilter(regexp_commands=['item_([0-9]*)']))
-            async def send_welcome(message: types.Message):
 
         Filter by content type:
 
@@ -437,7 +431,7 @@ class Dispatcher:
     def register_edited_message_handler(self, callback, *, commands=None, regexp=None, content_types=None, func=None,
                                         state=None, custom_filters=None, run_task=None, **kwargs):
         """
-        Register handler for edited message
+        Analog of message_handler but only for edited messages
 
         :param callback:
         :param commands: list of commands
@@ -468,7 +462,7 @@ class Dispatcher:
     def edited_message_handler(self, *custom_filters, commands=None, regexp=None, content_types=None, func=None,
                                state=None, run_task=None, **kwargs):
         """
-        Decorator for edited message handler
+        Analog of message_handler but only for edited messages
 
         You can use combination of different handlers
 
@@ -500,7 +494,7 @@ class Dispatcher:
     def register_channel_post_handler(self, callback, *, commands=None, regexp=None, content_types=None, func=None,
                                       state=None, custom_filters=None, run_task=None, **kwargs):
         """
-        Register handler for channel post
+        Register channels posts handler
 
         :param callback:
         :param commands: list of commands
@@ -531,7 +525,7 @@ class Dispatcher:
     def channel_post_handler(self, *custom_filters, commands=None, regexp=None, content_types=None, func=None,
                              state=None, run_task=None, **kwargs):
         """
-        Decorator for channel post handler
+        Register channels posts handler
 
         :param commands: list of commands
         :param regexp: REGEXP
@@ -555,7 +549,7 @@ class Dispatcher:
     def register_edited_channel_post_handler(self, callback, *, commands=None, regexp=None, content_types=None,
                                              func=None, state=None, custom_filters=None, run_task=None, **kwargs):
         """
-        Register handler for edited channel post
+        Register handler for edited channels posts
 
         :param callback:
         :param commands: list of commands
@@ -586,7 +580,7 @@ class Dispatcher:
     def edited_channel_post_handler(self, *custom_filters, commands=None, regexp=None, content_types=None, func=None,
                                     state=None, run_task=None, **kwargs):
         """
-        Decorator for edited channel post handler
+        Register handler for edited channels posts
 
         :param commands: list of commands
         :param regexp: REGEXP
@@ -609,7 +603,7 @@ class Dispatcher:
 
     def register_inline_handler(self, callback, *, func=None, state=None, custom_filters=None, run_task=None, **kwargs):
         """
-        Register handler for inline query
+        Handle inline query
 
         Example:
 
@@ -637,7 +631,7 @@ class Dispatcher:
 
     def inline_handler(self, *custom_filters, func=None, state=None, run_task=None, **kwargs):
         """
-        Decorator for inline query handler
+        Handle inline query
 
         Example:
 
@@ -664,7 +658,7 @@ class Dispatcher:
     def register_chosen_inline_handler(self, callback, *, func=None, state=None, custom_filters=None, run_task=None,
                                        **kwargs):
         """
-        Register handler for chosen inline query
+        Register chosen inline handler
 
         Example:
 
@@ -692,7 +686,7 @@ class Dispatcher:
 
     def chosen_inline_handler(self, *custom_filters, func=None, state=None, run_task=None, **kwargs):
         """
-        Decorator for chosen inline query handler
+        Register chosen inline handler
 
         Example:
 
@@ -719,7 +713,7 @@ class Dispatcher:
     def register_callback_query_handler(self, callback, *, func=None, state=None, custom_filters=None, run_task=None,
                                         **kwargs):
         """
-        Register handler for callback query
+        Add callback query handler
 
         Example:
 
@@ -746,7 +740,7 @@ class Dispatcher:
 
     def callback_query_handler(self, *custom_filters, func=None, state=None, run_task=None, **kwargs):
         """
-        Decorator for callback query handler
+        Add callback query handler
 
         Example:
 
@@ -772,7 +766,7 @@ class Dispatcher:
     def register_shipping_query_handler(self, callback, *, func=None, state=None, custom_filters=None, run_task=None,
                                         **kwargs):
         """
-        Register handler for shipping query
+        Add shipping query handler
 
         Example:
 
@@ -799,7 +793,7 @@ class Dispatcher:
 
     def shipping_query_handler(self, *custom_filters, func=None, state=None, run_task=None, **kwargs):
         """
-        Decorator for shipping query handler
+        Add shipping query handler
 
         Example:
 
@@ -825,7 +819,7 @@ class Dispatcher:
     def register_pre_checkout_query_handler(self, callback, *, func=None, state=None, custom_filters=None,
                                             run_task=None, **kwargs):
         """
-        Register handler for pre-checkout query
+        Add shipping query handler
 
         Example:
 
@@ -852,7 +846,7 @@ class Dispatcher:
 
     def pre_checkout_query_handler(self, *custom_filters, func=None, state=None, run_task=None, **kwargs):
         """
-        Decorator for pre-checkout query handler
+        Add shipping query handler
 
         Example:
 
@@ -877,7 +871,7 @@ class Dispatcher:
 
     def register_errors_handler(self, callback, *, func=None, exception=None, run_task=None):
         """
-        Register handler for errors
+        Register errors handler
 
         :param callback:
         :param func:
@@ -893,7 +887,7 @@ class Dispatcher:
 
     def errors_handler(self, func=None, exception=None, run_task=None):
         """
-        Decorator for errors handler
+        Decorator for registering errors handler
 
         :param func:
         :param exception: you can make handler for specific errors type
@@ -938,10 +932,10 @@ class Dispatcher:
     async def throttle(self, key, *, rate=None, user=None, chat=None, no_error=None) -> bool:
         """
         Execute throttling manager.
-        Returns True if limit has not exceeded otherwise raises ThrottleError or returns False
+        Return True limit is not exceeded otherwise raise ThrottleError or return False
 
         :param key: key in storage
-        :param rate: limit (by default is equal to default rate limit)
+        :param rate: limit (by default is equals with default rate limit)
         :param user: user id
         :param chat: chat id
         :param no_error: return boolean value instead of raising error
@@ -989,7 +983,7 @@ class Dispatcher:
         await self.storage.set_bucket(chat=chat, user=user, bucket=bucket)
 
         if not result and not no_error:
-            # Raise if it is allowed
+            # Raise if that is allowed
             raise Throttled(key=key, chat=chat, user=user, **data)
         return result
 
@@ -1041,7 +1035,7 @@ class Dispatcher:
     def async_task(self, func):
         """
         Execute handler as task and return None.
-        Use this decorator for slow handlers (with timeouts)
+        Use that decorator for slow handlers (with timeouts)
 
         .. code-block:: python3
 
