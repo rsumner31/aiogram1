@@ -36,7 +36,7 @@ class RethinkDBStorage(BaseStorage):
     """
 
     def __init__(self, host='localhost', port=28015, db='aiogram', table='aiogram', auth_key=None,
-                 user=None, password=None, timeout=20, ssl=None, loop=None):
+                 user=None, password=None, timeout=20, ssl=None, max_conn=10, loop=None):
         self._host = host
         self._port = port
         self._db = db
@@ -147,7 +147,7 @@ class RethinkDBStorage(BaseStorage):
         else:
             await r.table(self._table).insert({'id': chat, user: {'bucket': bucket}}).run(conn)
 
-    async def get_states_list(self) -> typing.List[typing.Tuple[int]]:
+    async def get_states_list(self) -> typing.List[typing.Tuple[int, int]]:
         """
         Get list of all stored chat's and user's
 
