@@ -54,7 +54,7 @@ class InlineKeyboardMarkup(base.TelegramObject):
         """
         btn_array = []
         for button in args:
-            btn_array.append(button.to_python())
+            btn_array.append(button.to_json())
         self.inline_keyboard.append(btn_array)
         return self
 
