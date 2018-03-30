@@ -1,9 +1,8 @@
 from . import base
 from . import fields
-from . import mixins
 
 
-class Audio(base.TelegramObject, mixins.Downloadable):
+class Audio(base.TelegramObject):
     """
     This object represents an audio file to be treated as music by the Telegram clients.
 
@@ -17,9 +16,9 @@ class Audio(base.TelegramObject, mixins.Downloadable):
     file_size: base.Integer = fields.Field()
 
     def __hash__(self):
-        return hash(self.file_id) + \
-            self.duration + \
-            hash(self.performer) + \
-            hash(self.title) + \
-            hash(self.mime_type) + \
-            self.file_size
+        return self.file_id
+
+    def __eq__(self, other):
+        if isinstance(other, type(self)):
+            return other.file_id == self.file_id
+        return self.file_id == other

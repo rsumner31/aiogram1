@@ -444,6 +444,8 @@ class Dispatcher:
         :param kwargs:
         :return: decorated function
         """
+        if commands is None:
+            commands = []
         if content_types is None:
             content_types = ContentType.TEXT
         if custom_filters is None:
@@ -507,6 +509,8 @@ class Dispatcher:
         :param kwargs:
         :return: decorated function
         """
+        if commands is None:
+            commands = []
         if content_types is None:
             content_types = ContentType.TEXT
         if custom_filters is None:
@@ -562,6 +566,8 @@ class Dispatcher:
         :param kwargs:
         :return: decorated function
         """
+        if commands is None:
+            commands = []
         if content_types is None:
             content_types = ContentType.TEXT
         if custom_filters is None:

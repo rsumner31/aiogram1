@@ -3,7 +3,6 @@ from .dataset import GAME
 
 game = types.Game(**GAME)
 
-
 def test_export():
     exported = game.to_python()
     assert isinstance(exported, dict)

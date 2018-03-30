@@ -137,8 +137,7 @@ class Item:
     """
     Helper item
 
-    If a value is not provided,
-    it will be automatically generated based on a variable's name
+    If value is not configured it will be generated automatically based on variable name
     """
 
     def __init__(self, value=None):
@@ -157,7 +156,7 @@ class Item:
 
 class ListItem(Item):
     """
-    This item is always a list
+    This item always is list
 
     You can use &, | and + operators for that.
     """
@@ -180,7 +179,7 @@ class ItemsList(list):
     """
     Patch for default list
 
-    This class provides +, &, |, +=, &=, |= operators for extending the list
+    This class provide +, &, |, +=, &=, |= operators for extending the list
     """
 
     def __init__(self, *seq):

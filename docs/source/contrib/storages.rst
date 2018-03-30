@@ -16,10 +16,3 @@ Redis storage
 .. automodule:: aiogram.contrib.fsm_storage.redis
     :members:
     :show-inheritance:
-
-RethinkDB storage
------------------
-
-.. automodule:: aiogram.contrib.fsm_storage.rethinkdb
-    :members:
-    :show-inheritance:

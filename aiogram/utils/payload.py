@@ -19,7 +19,7 @@ def generate_payload(exclude=None, **kwargs):
         exclude = []
     return {key: value for key, value in kwargs.items() if
             key not in exclude + DEFAULT_FILTER
-            and value is not None
+            and value
             and not key.startswith('_')}
 
 

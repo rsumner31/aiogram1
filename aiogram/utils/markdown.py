@@ -18,8 +18,6 @@ HTML_QUOTES_MAP = {
     '"': '&quot;'
 }
 
-_HQS = HTML_QUOTES_MAP.keys()  # HQS for HTML QUOTES SYMBOLS
-
 
 def _join(*content, sep=' '):
     return sep.join(map(str, content))
@@ -40,22 +38,21 @@ def quote_html(content):
     """
     Quote HTML symbols
 
-    All <, >, & and " symbols that are not a part of a tag or
-    an HTML entity must be replaced with the corresponding HTML entities
-    (< with &lt; > with &gt; & with &amp and " with &quot).
+    All <, > and & symbols that are not a part of a tag or an HTML entity
+    must be replaced with the corresponding HTML entities (< with &lt;, > with &gt; and & with &amp;).
 
     :param content: str
     :return: str
     """
     new_content = ''
     for symbol in content:
-        new_content += HTML_QUOTES_MAP[symbol] if symbol in _HQS else symbol
+        new_content += HTML_QUOTES_MAP[symbol] if symbol in '<>&"' else symbol
     return new_content
 
 
 def text(*content, sep=' '):
     """
-    Join all elements with a separator
+    Join all elements with separator
 
     :param content:
     :param sep:
@@ -171,7 +168,7 @@ def hlink(title, url):
     :param url:
     :return:
     """
-    return '<a href="{0}">{1}</a>'.format(url, quote_html(title))
+    return "<a href=\"{0}\">{1}</a>".format(url, quote_html(title))
 
 
 def escape_md(*content, sep=' '):

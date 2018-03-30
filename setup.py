@@ -2,10 +2,9 @@
 
 from distutils.core import setup
 
-from pip.req import parse_requirements
 from setuptools import PackageFinder
 
-from aiogram import Stage, VERSION
+from aiogram import VERSION
 
 
 def get_description():
@@ -15,7 +14,7 @@ def get_description():
     :return: description
     :rtype: str
     """
-    with open('README.rst', 'r', encoding='utf-8') as f:
+    with open('README.rst', encoding='utf-8') as f:
         return f.read()
 
 
@@ -26,35 +25,34 @@ def get_requirements():
     :return: requirements
     :rtype: list
     """
-    filename = 'requirements.txt'
-    if VERSION.stage == Stage.DEV:
-        filename = 'dev_' + filename
+    requirements = []
+    with open('requirements.txt', 'r') as file:
+        for line in file.readlines():
+            line = line.strip()
+            if not line or line.startswith('#'):
+                continue
+            requirements.append(line)
 
-    install_reqs = parse_requirements(filename, session='hack')
-    return [str(ir.req) for ir in install_reqs]
+    return requirements
 
-
-install_requires = get_requirements()
 
 setup(
     name='aiogram',
     version=VERSION.version,
-    packages=PackageFinder.find(exclude=('tests', 'tests.*', 'examples.*', 'docs',)),
+    packages=PackageFinder.find(exclude=('tests', 'examples', 'docs',)),
     url='https://github.com/aiogram/aiogram',
     license='MIT',
     author='Alex Root Junior',
     author_email='jroot.junior@gmail.com',
-    description='Is a pretty simple and fully asynchronous library for Telegram Bot API',
+    description='Is are pretty simple and fully asynchronously library for Telegram Bot API',
     long_description=get_description(),
     classifiers=[
         VERSION.pypi_development_status,  # Automated change classifier by build stage
+        'Programming Language :: Python :: 3.6',
         'Environment :: Console',
         'Framework :: AsyncIO',
-        'Intended Audience :: Developers',
-        'Intended Audience :: System Administrators',
-        'License :: OSI Approved :: MIT License',
-        'Programming Language :: Python :: 3.6',
         'Topic :: Software Development :: Libraries :: Application Frameworks',
+        'License :: OSI Approved :: MIT License',
     ],
-    install_requires=install_requires
+    install_requires=get_requirements()
 )

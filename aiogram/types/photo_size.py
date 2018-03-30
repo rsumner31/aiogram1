@@ -1,9 +1,8 @@
 from . import base
 from . import fields
-from . import mixins
 
 
-class PhotoSize(base.TelegramObject, mixins.Downloadable):
+class PhotoSize(base.TelegramObject):
     """
     This object represents one size of a photo or a file / sticker thumbnail.
 

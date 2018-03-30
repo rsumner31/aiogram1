@@ -60,11 +60,7 @@ class Handler:
         results = []
 
         if self.middleware_key:
-            try:
-                await self.dispatcher.middleware.trigger(f"pre_process_{self.middleware_key}", args)
-            except CancelHandler:  # Allow to cancel current event
-                return results
-
+            await self.dispatcher.middleware.trigger(f"pre_process_{self.middleware_key}", args)
         for filters, handler in self.handlers:
             if await check_filters(filters, args):
                 try:

@@ -377,10 +377,8 @@ async def migrate_redis1_to_redis2(storage1: RedisStorage, storage2: RedisStorag
     :param storage2: instance of RedisStorage2
     :return:
     """
-    if not isinstance(storage1, RedisStorage):  # better than assertion
-        raise TypeError(f'{type(storage1)} is not RedisStorage instance.')
-    if not isinstance(storage2, RedisStorage):
-        raise TypeError(f'{type(storage2)} is not RedisStorage instance.')
+    assert isinstance(storage1, RedisStorage)
+    assert isinstance(storage2, RedisStorage2)
 
     log = logging.getLogger('aiogram.RedisStorage')
 
